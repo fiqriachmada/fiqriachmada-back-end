@@ -1,0 +1,8 @@
+NODE_ENV=production
+DB_USERNAME=3xdCqGG6MwPjn7D.root
+DB_NAME=fiqriachmada
+DB_PASSWORD=GS2fOBvJGeg5mgaC
+DB_HOST='gateway01.ap-southeast-1.prod.aws.tidbcloud.com'
+
+# DB_URL='mysql://gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/warehouse?user=2puzcssyZR699bw.root&password=ghAYdJJAIg3bzcYg&sslMode=VERIFY_IDENTITY&enabledTLSProtocols=TLSv1.2,TLSv1.3'
+DB_URL='mysql://2puzcssyZR699bw.root:ghAYdJJAIg3bzcYg@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/fiqriachmada'

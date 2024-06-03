@@ -1,16 +1,10 @@
 const { DataTypes } = require("sequelize");
-const sequelizeDB = require("../configs/database");
-const database = require("../configs/database");
+
 const sequelize = require("../configs/database");
+const Image = require("./imageModels");
 
-// module.exports = (
-//     sequelize,
-// DataTypes
-
-// ) => {
-
-const Work = sequelize.define(
-  "work",
+const WorkModel = sequelize.define(
+  "Work",
   {
     id: { type: DataTypes.STRING, primaryKey: true },
     name: DataTypes.STRING,
@@ -26,16 +20,12 @@ const Work = sequelize.define(
 
     createdAt: { type: DataTypes.DATE, field: "created_at" },
     updatedAt: { type: DataTypes.DATE, field: "updated_at" },
-    
+    imageId: { type: DataTypes.STRING, field: "image_id" },
   },
   {}
 );
 
-Work.associate = function (models) {
-  // associations can be defined here
-};
+WorkModel.belongsTo(Image, { foreignKey: "image_id", as: "imageData" });
+Image.hasMany(WorkModel, { foreignKey: "image_id" });
 
-//   return Work;
-// };
-
-module.exports = Work;
+module.exports = WorkModel;

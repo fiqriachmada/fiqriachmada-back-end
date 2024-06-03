@@ -1,21 +1,14 @@
 var express = require("express");
-const Work = require("../models/workModels");
-var router = express.Router();
 
-/* GET users listing. */
-router.get("/", async function (req, res, next) {
-   try {
-     const works = await Work.findAll();
-     res.json({ works }); // Send retrieved works in the response
-   } catch (error) {
-     console.error(error);
-     res.status(500).json({ error: "Internal Server Error" }); // Handle error
-   }
-  // res.json({
-  //   api: [
-  //     { version: "1", description: "This is the first version of the API" },
-  //   ],
-  // });
-});
+const workRouter = require("./works/getAllWork");
+const workRouterById = require("./works/getWorkById");
+const deleteWorkById = require("./works/deleteWorkById");
+const addWork = require("./works/addWork");
+var api = express();
 
-module.exports = router;
+api.use("/work", workRouter);
+api.use("/work", workRouterById);
+api.use("/work", deleteWorkById);
+api.use("/work", addWork);
+
+module.exports = api;

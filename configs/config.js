@@ -21,5 +21,8 @@ module.exports = {
     url: process.env.DB_URL,
     host: process.env.DB_HOST,
     dialect: "mysql",
+    imageKitPublicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+    imageKitPrivateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+    imageKitUrl: process.env.IMAGEKIT_URL,
   },
 };
