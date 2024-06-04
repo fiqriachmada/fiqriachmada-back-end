@@ -52,12 +52,12 @@ const addWorkController = async (req, res) => {
         id: uuid,
         name: name,
         description: description,
-        imageId: uploadResponse.fileId || uuid,
+        imageId: uuid,
       });
       const image = await imageModel.create({
-        id: uploadResponse.fileId || uuid,
+        id: uuid,
         workId: works.id,
-        url: uploadResponse.url || "null",
+        url: "null",
       });
       const data = { data: { ...works.dataValues, ...image.dataValues } };
       const response = {
@@ -71,7 +71,8 @@ const addWorkController = async (req, res) => {
         res.json(response);
       }
     } catch (error) {
-      res.status(500).json({ error: "Internal Server Error: " + error });}
+      res.status(500).json({ error: "Internal Server Error: " + error });
+    }
   }
 };
 
