@@ -18,7 +18,7 @@ const getAllWorkController = async (req, res) => {
     };
     res.json(response);
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error: " + error }); // Handle error
+    res.status(500).json({ error: "Internal Server Error: " + error });
   }
 };
 

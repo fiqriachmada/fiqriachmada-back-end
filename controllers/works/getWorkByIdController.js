@@ -3,7 +3,7 @@ const workModel = require("../../models/workModels");
 
 const getWorkByIdController = async (req, res) => {
   const id = req.params.id;
-  console.log("id", id);
+
   try {
     const works = await workModel.findByPk(id, {
       include: [
@@ -28,7 +28,7 @@ const getWorkByIdController = async (req, res) => {
       res.json(response);
     }
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error: " + error }); // Handle error
+    res.status(500).json({ error: "Internal Server Error: " + error });
   }
 };
 

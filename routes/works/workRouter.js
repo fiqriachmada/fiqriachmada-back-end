@@ -17,9 +17,4 @@ workRouter.use("/work", updateWorkByIdRouter);
 
 workRouter.use("/work", deleteWorkByIdRouter);
 
-// api.use("/work", workRouterById);
-// api.use("/work", deleteWorkById);
-// api.use("/work", updateWorkById);
-// api.use("/work", addWork);
-
 module.exports = workRouter;

@@ -1,7 +1,3 @@
-// const { DataTypes } = require("sequelize");
-// const sequelize = require("./index");
-// const Work = require("./Work");
-
 const { DataTypes } = require("sequelize");
 
 const sequelize = require("../configs/database");
