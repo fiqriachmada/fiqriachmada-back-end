@@ -3,8 +3,8 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../configs/database");
 const Image = require("./imageModels");
 
-const WorkModel = sequelize.define(
-  "Work",
+const workModel = sequelize.define(
+  "work",
   {
     id: { type: DataTypes.STRING, primaryKey: true },
     name: DataTypes.STRING,
@@ -25,7 +25,7 @@ const WorkModel = sequelize.define(
   {}
 );
 
-WorkModel.belongsTo(Image, { foreignKey: "image_id", as: "imageData" });
-Image.hasMany(WorkModel, { foreignKey: "image_id" });
+workModel.belongsTo(Image, { foreignKey: "image_id", as: "imageData" });
+Image.hasMany(workModel, { foreignKey: "image_id" });
 
-module.exports = WorkModel;
+module.exports = workModel;

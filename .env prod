@@ -6,3 +6,8 @@ DB_HOST='gateway01.ap-southeast-1.prod.aws.tidbcloud.com'
 
 # DB_URL='mysql://gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/warehouse?user=2puzcssyZR699bw.root&password=ghAYdJJAIg3bzcYg&sslMode=VERIFY_IDENTITY&enabledTLSProtocols=TLSv1.2,TLSv1.3'
 DB_URL='mysql://2puzcssyZR699bw.root:ghAYdJJAIg3bzcYg@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/fiqriachmada'
+
+IMAGEKIT_PUBLIC_KEY=public_DKs2xZXuaA57GldqYNw1uq+3oOY=
+
+IMAGEKIT_PRIVATE_KEY=private_1fpIG0Igqkc3LE8na/zcRBxCe5U=
+IMAGEKIT_URL=https://ik.imagekit.io/fiqriachmada

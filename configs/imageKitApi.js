@@ -10,6 +10,4 @@ var imageKitApi = new ImageKit({
   urlEndpoint: imageKitConfig.imageKitUrl,
 });
 
-console.log("imageKitApi", imageKitApi);
-
 module.exports = imageKitApi;
