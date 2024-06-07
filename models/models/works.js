@@ -17,8 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: { type: DataTypes.STRING },
       description: DataTypes.STRING,
-      start_date: DataTypes.DATE,
-      end_date: DataTypes.DATE,
+      startDate: { type: DataTypes.DATE, field: "start_date" },
+      endDate: { type: DataTypes.DATE, field: "end_date" },
       imageId: { type: DataTypes.STRING, field: "image_id" },
 
       createdAt: { type: DataTypes.DATE, field: "created_at" },
