@@ -1,6 +1,5 @@
 const imageKitApi = require("../../configs/imageKitApi");
-const imageModel = require("../../models/imageModels");
-const workModel = require("../../models/workModels");
+const db = require("../../models");
 
 const updateWorkByIdController = async (req, res) => {
   const { name, description, startDate, endDate } = req.body;
@@ -9,6 +8,9 @@ const updateWorkByIdController = async (req, res) => {
 
   const fileData = req.file;
 
+  const workModel = db.works;
+  const imageModel = db.images;
+
   const selectedWork = await workModel.findOne({ where: { id: id } });
   const selectedImage = await imageModel.findOne({ where: { workId: id } });
 
@@ -16,7 +18,7 @@ const updateWorkByIdController = async (req, res) => {
 
   if (selectedWork) {
     if (fileData) {
-      if (selectedImage.url === "null") {
+      if (!selectedImage.url) {
         const uploadResponse = await imageKitApi.upload({
           file: fileData.buffer,
           fileName: req.file.originalname,
@@ -44,7 +46,7 @@ const updateWorkByIdController = async (req, res) => {
           await imageModel.update(
             {
               id: uploadResponse.fileId,
-              url: uploadResponse.url,
+              imageUrl: uploadResponse.url,
             },
             { where: { workId: id } }
           );
@@ -106,7 +108,7 @@ const updateWorkByIdController = async (req, res) => {
           await imageModel.update(
             {
               id: uploadResponse.fileId,
-              url: uploadResponse.url,
+              imageUrl: uploadResponse.url,
             },
             { where: { workId: id } }
           );
@@ -116,7 +118,7 @@ const updateWorkByIdController = async (req, res) => {
             name: name,
 
             imageId: uploadResponse.fileId,
-            imageUrl: uploadResponse.url,
+            imageUrl:uploadResponse.url,
             description: description,
             startDate: startDate,
             endDate,

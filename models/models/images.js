@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   images.init(
     {
       workId: { type: DataTypes.STRING, field: "work_id" },
-      image_url: DataTypes.STRING,
+      imageUrl: { type: DataTypes.STRING, field: "image_url" },
 
       createdAt: { type: DataTypes.DATE, field: "created_at" },
       updatedAt: { type: DataTypes.DATE, field: "updated_at" },
