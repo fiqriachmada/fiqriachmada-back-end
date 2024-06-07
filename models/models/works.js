@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      console.log("models", models);
+
       works.hasMany(models.images, { as: "imageData", foreignKey: "workId" });
     }
   }

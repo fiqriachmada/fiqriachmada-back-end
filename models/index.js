@@ -44,12 +44,6 @@ fs.readdirSync(__dirname + "/models/")
     );
   })
   .forEach((file) => {
-    // console.log("file", file);
-    // const model = require(path.join(__dirname + "/models/", file))(
-    //   sequelize,
-    //   Sequelize.DataTypes
-    // );
-    console.log("file", file);
     const modelName = file.replace(".js", ""); // Mendapatkan nama model dari nama file
     const model = require(path.join(__dirname + "/models/", file))(
       sequelize,
@@ -57,11 +51,9 @@ fs.readdirSync(__dirname + "/models/")
     );
 
     db[modelName] = model;
-    console.log("db[modelName]", db[modelName]);
   });
 
 Object.keys(db).forEach((modelName) => {
-  console.log("modelName", modelName);
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }

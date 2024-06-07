@@ -1,7 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  // console.log('DataTypes', DataTypes)
   class images extends Model {
     /**
      * Helper method for defining associations.
