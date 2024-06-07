@@ -1,13 +1,14 @@
-NODE_ENV=production
-DB_USERNAME=3xdCqGG6MwPjn7D.root
-DB_NAME=fiqriachmada
-DB_PASSWORD=GS2fOBvJGeg5mgaC
-DB_HOST='gateway01.ap-southeast-1.prod.aws.tidbcloud.com'
-
 # DB_URL='mysql://gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/warehouse?user=2puzcssyZR699bw.root&password=ghAYdJJAIg3bzcYg&sslMode=VERIFY_IDENTITY&enabledTLSProtocols=TLSv1.2,TLSv1.3'
+
 DB_URL='mysql://2puzcssyZR699bw.root:ghAYdJJAIg3bzcYg@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/fiqriachmada'
+NODE_ENV=production
+DB_USERNAME=2puzcssyZR699bw.root
+DB_NAME=fiqriachmada
+DB_PASSWORD=ghAYdJJAIg3bzcYg
+DB_HOST='gateway01.ap-southeast-1.prod.aws.tidbcloud.com'
 
 IMAGEKIT_PUBLIC_KEY=public_DKs2xZXuaA57GldqYNw1uq+3oOY=
 
 IMAGEKIT_PRIVATE_KEY=private_1fpIG0Igqkc3LE8na/zcRBxCe5U=
 IMAGEKIT_URL=https://ik.imagekit.io/fiqriachmada
+JWT_SECRET_KEY=c9bdcacd2a3a7c388ecd23b2e79d427aba7632d130c6d990c92ab315837e6273

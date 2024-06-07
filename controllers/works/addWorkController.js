@@ -1,10 +1,17 @@
 const imageKitApi = require("../../configs/imageKitApi");
-const imageModel = require("../../models/imageModels");
-const workModel = require("../../models/workModels");
+const db = require("../../models");
+// const works = require("../../models/models/works");
+const worksModel = db.works;
+const imagesModel = db.images;
+
+console.log("db.images", db.images);
+// const imageModel = require("../../models/imageModels");
+// const workModel = require("../../models/workModels");
 
 const addWorkController = async (req, res) => {
   const { name, description } = req.body;
   const uuid = crypto.randomUUID();
+  console.log("uuid", uuid);
   const fileData = req.file;
   if (fileData) {
     try {
@@ -21,13 +28,13 @@ const addWorkController = async (req, res) => {
         ],
       });
 
-      const works = await workModel.create({
+      const works = await worksModel.create({
         id: uuid,
         name: name,
         description: description,
         imageId: uploadResponse.fileId || uuid,
       });
-      const image = await imageModel.create({
+      const image = await imagesModel.create({
         id: uploadResponse.fileId || uuid,
         workId: works.id,
         url: uploadResponse.url || "null",
@@ -48,15 +55,15 @@ const addWorkController = async (req, res) => {
     }
   } else {
     try {
-      const works = await workModel.create({
+      const works = await worksModel.create({
         id: uuid,
         name: name,
         description: description,
         imageId: uuid,
       });
-      const image = await imageModel.create({
+      const image = await imagesModel.create({
         id: uuid,
-        workId: works.id,
+        workId: works.id || uuid,
         url: "null",
       });
       const data = { data: { ...works.dataValues, ...image.dataValues } };

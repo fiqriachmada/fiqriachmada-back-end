@@ -1,7 +1,11 @@
-const imageModel = require("../../models/imageModels");
-const workModel = require("../../models/workModels");
+// const imageModel = require("../../models/imageModels");
+// const workModel = require("../../models/workModels");
+
+const db = require("../../models");
 
 const getAllWorkController = async (req, res) => {
+  const workModel = db.works;
+  const imageModel = db.images;
   try {
     const works = await workModel.findAll({
       include: [{ model: imageModel, as: "imageData", required: false }],
