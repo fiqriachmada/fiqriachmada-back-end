@@ -4,6 +4,7 @@
 const db = require("../../models");
 
 const getAllWorkController = async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
   const workModel = db.works;
   const imageModel = db.images;
   try {
@@ -44,6 +45,7 @@ const getAllWorkController = async (req, res) => {
       message: "success",
       data: sortingData.length > 0 ? JSON.parse(sortingData) : [],
     };
+
     res.json(response);
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error: " + error });
