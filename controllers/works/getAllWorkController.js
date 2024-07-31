@@ -4,7 +4,6 @@
 const db = require("../../models");
 
 const getAllWorkController = async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*");
   const workModel = db.works;
   const imageModel = db.images;
   try {
