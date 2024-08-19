@@ -1,181 +1,119 @@
 const imageKitApi = require("../../configs/imageKitApi");
 const db = require("../../models");
 
+const worksModel = db.works;
+const imagesModel = db.images;
+
 const updateWorkByIdController = async (req, res) => {
-  const { name, description, startDate, endDate } = req.body;
-
+  const { name, description } = req.body;
   const id = req.params.id;
-
   const fileData = req.file;
 
-  const workModel = db.works;
-  const imageModel = db.images;
-
-  const selectedWork = await workModel.findOne({ where: { id: id } });
-  const selectedImage = await imageModel.findOne({ where: { workId: id } });
-
-  const selectedImageUrl = selectedImage?.dataValues?.url;
-
-  if (selectedWork) {
-    if (fileData) {
-      if (!selectedImage.url) {
-        const uploadResponse = await imageKitApi.upload({
-          file: fileData.buffer,
-          fileName: req.file.originalname,
-          folder: "personal-website",
-          extensions: [
-            {
-              name: "google-auto-tagging",
-              maxTags: 5,
-              minConfidence: 95,
-            },
-          ],
-        });
-
-        try {
-          await workModel.update(
-            {
-              name: name,
-              description: description,
-              imageId: uploadResponse.fileId,
-              startDate: startDate,
-              endDate: endDate,
-            },
-            { where: { id: id } }
-          );
-          await imageModel.update(
-            {
-              id: uploadResponse.fileId,
-              imageUrl: uploadResponse.url,
-            },
-            { where: { workId: id } }
-          );
-
-          const data = {
-            id: id,
-            name: name,
-            imageId: uploadResponse.fileId,
-            imageUrl: uploadResponse.url,
-            description: description,
-            startDate: startDate,
-            endDate,
-          };
-
-          const response = {
-            status: 200,
-            message: "success",
-            data: data,
-          };
-
-          if (!response.data) {
-            res.status(500).json({
-              status: 404,
-              message: "No Data Found",
-              data: [],
-            });
-          } else {
-            res.json(response);
-          }
-        } catch (error) {
-          res.status(500).json({ error: "Internal Server Error: " + error });
-        }
-      } else if (selectedImage.url !== "null" && selectedImage.id) {
-        await imageKitApi.deleteFile(selectedImage.id);
-        const uploadResponse = await imageKitApi.upload({
-          file: fileData.buffer,
-          fileName: req.file.originalname,
-          folder: "personal-website",
-          extensions: [
-            {
-              name: "google-auto-tagging",
-              maxTags: 5,
-              minConfidence: 95,
-            },
-          ],
-        });
-
-        try {
-          await workModel.update(
-            {
-              name: name,
-              description: description,
-              imageId: uploadResponse.fileId,
-              startDate: startDate,
-              endDate: endDate,
-            },
-            { where: { id: id } }
-          );
-          await imageModel.update(
-            {
-              id: uploadResponse.fileId,
-              imageUrl: uploadResponse.url,
-            },
-            { where: { workId: id } }
-          );
-
-          const data = {
-            id: id,
-            name: name,
-
-            imageId: uploadResponse.fileId,
-            imageUrl:uploadResponse.url,
-            description: description,
-            startDate: startDate,
-            endDate,
-          };
-
-          const response = {
-            status: 200,
-            message: "success",
-            data: data,
-          };
-
-          if (!response.data) {
-            res.status(500).json({
-              status: 404,
-              message: "No Data Found",
-              data: [],
-            });
-          } else {
-            res.json(response);
-          }
-        } catch (error) {
-          res.status(500).json({ error: "Internal Server Error: " + error });
-        }
-      }
-    } else {
-      try {
-        await workModel.update(
-          {
-            name: name,
-            description: description,
-            startDate: startDate,
-            endDate: endDate,
-          },
-          { where: { id: id } }
-        );
-
-        const data = {
-          id: id,
-          ...req.body,
-        };
-
-        const response = {
-          status: 200,
-          message: "success",
-          data: data,
-        };
-
-        res.json(response);
-      } catch (error) {
-        res.status(500).json({ error: "Internal Server Error: " + error });
-      }
-    }
-  } else {
-    res.status(404).json({
-      status: 404,
-      message: "No Data Found",
+  // Validate input
+  if (!id || !name) {
+    return res.status(400).json({
+      status: 400,
+      message: "ID and Name are required",
       data: [],
+    });
+  }
+
+  const transaction = await db.sequelize.transaction();
+
+  try {
+    // Update work entity
+    const work = await worksModel.findByPk(id, { transaction });
+
+    if (!work) {
+      await transaction.rollback();
+      return res.status(404).json({
+        status: 404,
+        message: "Data Not Found",
+        data: [],
+      });
+    }
+
+    // Get previous image if exists
+    const previousImage = await imagesModel.findOne({
+      where: { workId: id },
+      transaction,
+    });
+
+    if (fileData) {
+      // Upload new image
+      const uploadResponse = await imageKitApi.upload({
+        file: fileData.buffer,
+        fileName: fileData.originalname,
+        folder: "personal-website",
+        extensions: [
+          {
+            name: "google-auto-tagging",
+            maxTags: 5,
+            minConfidence: 95,
+          },
+        ],
+      });
+
+      // Delete previous image from ImageKit if exists
+      if (previousImage) {
+        await imageKitApi.deleteFile(previousImage.id);
+        await imagesModel.destroy({
+          where: { id: previousImage.id },
+          transaction,
+        });
+      }
+
+      // Update image entity with new image
+      await imagesModel.upsert(
+        {
+          id: uploadResponse.fileId,
+          workId: id,
+          imageUrl: uploadResponse.url,
+        },
+        { transaction }
+      );
+
+      // Update work entity with new image ID
+      await work.update(
+        {
+          name: name,
+          description: description,
+          imageId: uploadResponse.fileId,
+        },
+        { transaction }
+      );
+    } else {
+      // Update work entity without new image
+      await work.update(
+        {
+          name: name,
+          description: description,
+        },
+        { transaction }
+      );
+    }
+
+    await transaction.commit();
+
+    // Get updated image data if exists
+    const updatedImage = fileData
+      ? await imagesModel.findByPk(work.imageId)
+      : previousImage;
+
+    res.json({
+      status: 200,
+      message: "Success",
+      data: {
+        ...work.dataValues,
+        image: updatedImage ? updatedImage.dataValues : null,
+      },
+    });
+  } catch (error) {
+    await transaction.rollback();
+    res.status(500).json({
+      status: 500,
+      message: error.message || "Internal Server Error",
+      data: [error.message],
     });
   }
 };

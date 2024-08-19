@@ -1,7 +1,6 @@
 const imageKitApi = require("../../configs/imageKitApi");
 const db = require("../../models");
 
-
 const deleteWorkByIdController = async (req, res) => {
   const { id } = req.params;
 
@@ -14,29 +13,32 @@ const deleteWorkByIdController = async (req, res) => {
 
   const selectedImageUrl = selectedImage?.dataValues?.url;
 
+  console.log('selectedImageId', selectedImageId)
+
   if (!selectedImageId) {
     res.status(404).json({
       status: 404,
       message: "Data Not Found",
       data: [],
     });
-  } else if (selectedImageUrl === "null") {
-    try {
-      await workModel.destroy({ where: { id: id } });
-      await imageModel.destroy({ where: { workId: id } });
-      const data = { data: selectedImage };
-      const response = {
-        status: 200,
-        message: "success",
-        ...data,
-      };
 
-      res.json(response);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ error: "Internal Server Error: " + error.message || error });
-    }
+    // } else if (selectedImageUrl === "null") {
+    //   try {
+    //     await workModel.destroy({ where: { id: id } });
+    //     await imageModel.destroy({ where: { workId: id } });
+    //     const data = { data: selectedImage };
+    //     const response = {
+    //       status: 200,
+    //       message: "success",
+    //       ...data,
+    //     };
+
+    //     res.json(response);
+    //   } catch (error) {
+    //     res
+    //       .status(500)
+    //       .json({ error: "Internal Server Error: " + error.message || error });
+    //   }
   } else if (selectedImageUrl) {
     try {
       await imageKitApi.deleteFile(selectedImageId);
