@@ -1,80 +1,73 @@
 const imageKitApi = require("../../configs/imageKitApi");
 const db = require("../../models");
 
+const worksModel = db.works;
+const imagesModel = db.images;
+
 const deleteWorkByIdController = async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id;
 
-  const workModel = db.works;
-  const imageModel = db.images;
-
-  const selectedImage = await imageModel.findOne({ where: { workId: id } });
-
-  const selectedImageId = selectedImage?.dataValues?.id;
-
-  const selectedImageUrl = selectedImage?.dataValues?.url;
-
-  if (!selectedImageId) {
-    res.status(404).json({
-      status: 404,
-      message: "Data Not Found",
+  // Validate input
+  if (!id) {
+    return res.status(400).json({
+      status: 400,
+      message: "ID is required",
       data: [],
     });
+  }
 
-    // } else if (selectedImageUrl === "null") {
-    //   try {
-    //     await workModel.destroy({ where: { id: id } });
-    //     await imageModel.destroy({ where: { workId: id } });
-    //     const data = { data: selectedImage };
-    //     const response = {
-    //       status: 200,
-    //       message: "success",
-    //       ...data,
-    //     };
+  const transaction = await db.sequelize.transaction();
 
-    //     res.json(response);
-    //   } catch (error) {
-    //     res
-    //       .status(500)
-    //       .json({ error: "Internal Server Error: " + error.message || error });
-    //   }
-  } else if (selectedImageUrl) {
-    try {
-      await imageKitApi.deleteFile(selectedImageId);
-      await workModel.destroy({ where: { id: id } });
-      await imageModel.destroy({ where: { workId: id } });
-      const data = { data: selectedImage };
-      const response = {
-        status: 200,
-        message: "success",
-        ...data,
-      };
+  try {
+    // Find the work record
+    const work = await worksModel.findByPk(id, { transaction });
 
-      res.json(response);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ error: "Internal Server Error: " + error.message || error });
+    if (!work) {
+      await transaction.rollback();
+      return res.status(404).json({
+        status: 404,
+        message: "Data Not Found",
+        data: [],
+      });
     }
-  } else {
-    try {
-      await workModel.destroy({ where: { id: id } });
-      await imageModel.destroy({ where: { workId: id } });
-      const data = { data: selectedImage };
 
-      const response = {
-        status: 200,
-        message: "success",
-        ...data,
-      };
+    // Find the associated image if exists
+    const image = await imagesModel.findOne({
+      where: { workId: id },
+      transaction,
+    });
 
-      if (!response.data) {
-        res.json({ data: "No Data Found" });
-      } else {
-        res.json(response);
-      }
-    } catch (error) {
-      res.status(500).json({ error: "Internal Server Error: " + error });
+    if (image) {
+      // Delete the image from ImageKit
+      await imageKitApi.deleteFile(image.id);
+
+      // Remove the image record from the database
+      await imagesModel.destroy({
+        where: { id: image.id },
+        transaction,
+      });
     }
+
+    // Delete the work record
+    await worksModel.destroy({
+      where: { id: id },
+      transaction,
+    });
+
+    await transaction.commit();
+
+    res.json({
+      status: 200,
+      message: "Success",
+      data: [],
+    });
+  } catch (error) {
+    await transaction.rollback();
+    res.status(500).json({
+      status: 500,
+      message: error.message || "Internal Server Error",
+      data: [error.message],
+    });
   }
 };
 
