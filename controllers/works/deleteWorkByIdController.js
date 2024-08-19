@@ -1,9 +1,12 @@
 const imageKitApi = require("../../configs/imageKitApi");
-const imageModel = require("../../models/imageModels");
-const workModel = require("../../models/workModels");
+const db = require("../../models");
+
 
 const deleteWorkByIdController = async (req, res) => {
   const { id } = req.params;
+
+  const workModel = db.works;
+  const imageModel = db.images;
 
   const selectedImage = await imageModel.findOne({ where: { workId: id } });
 

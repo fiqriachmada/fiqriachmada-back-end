@@ -1,6 +1,3 @@
-// const imageModel = require("../../models/imageModels");
-// const workModel = require("../../models/workModels");
-
 const db = require("../../models");
 
 const getAllWorkController = async (req, res) => {
@@ -37,7 +34,7 @@ const getAllWorkController = async (req, res) => {
     };
 
     const sortingData = JSON.stringify(
-      data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+      data.data.sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
     );
     const response = {
       status: 200,
