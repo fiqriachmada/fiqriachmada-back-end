@@ -9,6 +9,7 @@ const addWorkController = async (req, res) => {
   const uuid = crypto.randomUUID();
 
   const fileData = req.file;
+
   if (fileData) {
     try {
       const uploadResponse = await imageKitApi.upload({
@@ -33,7 +34,7 @@ const addWorkController = async (req, res) => {
       const image = await imagesModel.create({
         id: uploadResponse.fileId || uuid,
         workId: works.id,
-        url: uploadResponse.url || "null",
+        imageUrl: uploadResponse.url || "null",
       });
       const data = { data: { ...works.dataValues, ...image.dataValues } };
       const response = {
