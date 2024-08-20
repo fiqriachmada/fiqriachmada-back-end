@@ -6,7 +6,7 @@ const worksModel = db.works;
 const imagesModel = db.images;
 
 const addWorkController = async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, startDate, endDate } = req.body;
   const uuid = crypto.randomUUID();
   const fileData = req.file;
 
@@ -45,6 +45,8 @@ const addWorkController = async (req, res) => {
         id: uuid, // You can use the work ID or some other identifier here
         workId: uuid,
         imageUrl: null, // No URL since no image is provided
+        startDate,
+        endDate,
       });
     }
 
