@@ -45,16 +45,16 @@ const addWorkController = async (req, res) => {
         id: uuid, // You can use the work ID or some other identifier here
         workId: uuid,
         imageUrl: null, // No URL since no image is provided
-        startDate,
-        endDate,
       });
     }
-
+    
     // Create the work entry with imageId set to the appropriate value
     const works = await worksModel.create({
       id: uuid,
       name: name,
       description: description,
+      startDate,
+      endDate,
       imageId: fileData ? uploadResponse.fileId : uuid, // Set to uuid if no file
     });
 
