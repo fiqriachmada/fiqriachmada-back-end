@@ -10,13 +10,13 @@ const updateWorkByIdController = async (req, res) => {
   const fileData = req.file;
 
   // Validate input
-  // if (!id || !name) {
-  //   return res.status(400).json({
-  //     status: 400,
-  //     message: "ID and Name are required",
-  //     data: [],
-  //   });
-  // }
+  if (!id || !name) {
+    return res.status(400).json({
+      status: 400,
+      message: "ID and Name are required",
+      data: [],
+    });
+  }
 
   const transaction = await db.sequelize.transaction();
 
