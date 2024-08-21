@@ -37,16 +37,15 @@ const deleteWorkByIdController = async (req, res) => {
       transaction,
     });
 
-    if (image) {
+    if (image.imageUrl) {
       // Delete the image from ImageKit
       await imageKitApi.deleteFile(image.id);
-
-      // Remove the image record from the database
-      await imagesModel.destroy({
-        where: { id: image.id },
-        transaction,
-      });
     }
+    // Remove the image record from the database
+    await imagesModel.destroy({
+      where: { id: image.id },
+      transaction,
+    });
 
     // Delete the work record
     await worksModel.destroy({
