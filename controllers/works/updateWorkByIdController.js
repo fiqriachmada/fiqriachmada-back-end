@@ -40,7 +40,10 @@ const updateWorkByIdController = async (req, res) => {
     });
 
     if (fileData) {
-      // Upload new image
+      // Delete previous image from ImageKit if exists
+      previousImage.imageUrl &&
+        (await imageKitApi.deleteFile(previousImage.id));
+
       const uploadResponse = await imageKitApi.upload({
         file: fileData.buffer,
         fileName: fileData.originalname,
@@ -53,10 +56,6 @@ const updateWorkByIdController = async (req, res) => {
           },
         ],
       });
-
-      // Delete previous image from ImageKit if exists
-      previousImage.imageUrl &&
-        (await imageKitApi.deleteFile(previousImage.id));
       await imagesModel.destroy({
         where: { id: previousImage.id },
         transaction,
