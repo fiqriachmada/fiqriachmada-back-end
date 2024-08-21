@@ -80,6 +80,25 @@ const updateWorkByIdController = async (req, res) => {
           },
           { transaction }
         );
+      } else {
+        await imagesModel.update(
+          {
+            id: uploadResponse.fileId,
+            workId: id,
+            imageUrl: uploadResponse.url,
+          },
+          { transaction }
+        );
+        await work.update(
+          {
+            name: name,
+            description: description,
+            imageId: uploadResponse.fileId,
+            startDate,
+            endDate,
+          },
+          { transaction }
+        );
       }
     } else {
       // Update work entity without new image
