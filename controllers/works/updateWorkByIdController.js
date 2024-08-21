@@ -5,7 +5,7 @@ const worksModel = db.works;
 const imagesModel = db.images;
 
 const updateWorkByIdController = async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, startDate, endDate } = req.body;
   const id = req.params.id;
   const fileData = req.file;
 
@@ -55,39 +55,40 @@ const updateWorkByIdController = async (req, res) => {
       });
 
       // Delete previous image from ImageKit if exists
-      if (previousImage) {
+      if (previousImage.imageUrl) {
         await imageKitApi.deleteFile(previousImage.id);
         await imagesModel.destroy({
           where: { id: previousImage.id },
           transaction,
         });
+        // Update image entity with new image
+        await imagesModel.upsert(
+          {
+            id: uploadResponse.fileId,
+            workId: id,
+            imageUrl: uploadResponse.url,
+          },
+          { transaction }
+        );
+        await work.update(
+          {
+            name: name,
+            description: description,
+            imageId: uploadResponse.fileId,
+            startDate,
+            endDate,
+          },
+          { transaction }
+        );
       }
-
-      // Update image entity with new image
-      await imagesModel.upsert(
-        {
-          id: uploadResponse.fileId,
-          workId: id,
-          imageUrl: uploadResponse.url,
-        },
-        { transaction }
-      );
-
-      // Update work entity with new image ID
-      await work.update(
-        {
-          name: name,
-          description: description,
-          imageId: uploadResponse.fileId,
-        },
-        { transaction }
-      );
     } else {
       // Update work entity without new image
       await work.update(
         {
           name: name,
           description: description,
+          startDate,
+          endDate,
         },
         { transaction }
       );
