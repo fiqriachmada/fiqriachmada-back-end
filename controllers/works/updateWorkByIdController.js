@@ -10,13 +10,13 @@ const updateWorkByIdController = async (req, res) => {
   const fileData = req.file;
 
   // Validate input
-  if (!id || !name) {
-    return res.status(400).json({
-      status: 400,
-      message: "ID and Name are required",
-      data: [],
-    });
-  }
+  // if (!id || !name) {
+  //   return res.status(400).json({
+  //     status: 400,
+  //     message: "ID and Name are required",
+  //     data: [],
+  //   });
+  // }
 
   const transaction = await db.sequelize.transaction();
 
@@ -55,51 +55,31 @@ const updateWorkByIdController = async (req, res) => {
       });
 
       // Delete previous image from ImageKit if exists
-      if (previousImage.imageUrl) {
-        await imageKitApi.deleteFile(previousImage.id);
-        await imagesModel.destroy({
-          where: { id: previousImage.id },
-          transaction,
-        });
-        // Update image entity with new image
-        await imagesModel.upsert(
-          {
-            id: uploadResponse.fileId,
-            workId: id,
-            imageUrl: uploadResponse.url,
-          },
-          { transaction }
-        );
-        await work.update(
-          {
-            name: name,
-            description: description,
-            imageId: uploadResponse.fileId,
-            startDate,
-            endDate,
-          },
-          { transaction }
-        );
-      } else {
-        await imagesModel.update(
-          {
-            id: uploadResponse.fileId,
-            workId: id,
-            imageUrl: uploadResponse.url,
-          },
-          { transaction }
-        );
-        await work.update(
-          {
-            name: name,
-            description: description,
-            imageId: uploadResponse.fileId,
-            startDate,
-            endDate,
-          },
-          { transaction }
-        );
-      }
+      previousImage.imageUrl &&
+        (await imageKitApi.deleteFile(previousImage.id));
+      await imagesModel.destroy({
+        where: { id: previousImage.id },
+        transaction,
+      });
+      // Update image entity with new image
+      await imagesModel.upsert(
+        {
+          id: uploadResponse.fileId,
+          workId: id,
+          imageUrl: uploadResponse.url,
+        },
+        { transaction }
+      );
+      await work.update(
+        {
+          name: name,
+          description: description,
+          imageId: uploadResponse.fileId,
+          startDate,
+          endDate,
+        },
+        { transaction }
+      );
     } else {
       // Update work entity without new image
       await work.update(
@@ -133,7 +113,7 @@ const updateWorkByIdController = async (req, res) => {
     res.status(500).json({
       status: 500,
       message: error.message || "Internal Server Error",
-      data: [error.message],
+      data: [{ error: error.message }],
     });
   }
 };
