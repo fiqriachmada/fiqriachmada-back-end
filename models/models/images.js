@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class images extends Model {
     static associate(models) {
       this.belongsTo(models.works, {
-        foreignKey: "work_id",
+        foreignKey: "workId",
         as: "work",
       });
     }
